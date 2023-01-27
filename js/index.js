@@ -40,3 +40,32 @@ function getWinner(playerChoice, computerChoice) {
 
   return winner;
 }
+
+function createWinnerMsg(playerChoice, computerChoice, winner) {
+  let msg;
+  let playerChoiceUpperCased =
+    playerChoice.charAt(0).toUpperCase() + playerChoice.slice(1);
+  let computerChoiceUpperCased =
+    computerChoice.charAt(0).toUpperCase() + computerChoice.slice(1);
+
+  if (winner === "tie") {
+    msg = `It's a tie! Both you and the computer chose ${playerChoiceUpperCased}.`;
+  } else if (winner === "player") {
+    msg = `You win! ${playerChoiceUpperCased} beats ${computerChoiceUpperCased}.`;
+  } else {
+    msg = `You lose! ${computerChoiceUpperCased} beats ${playerChoiceUpperCased}.`;
+  }
+
+  return msg;
+}
+
+function playRound(playerSelection, computerSelection) {
+  const playerChoice = playerSelection.toLowerCase();
+  let msg;
+  let winner;
+
+  winner = getWinner(playerChoice, computerSelection);
+  msg = createWinnerMsg(playerChoice, computerSelection, winner);
+
+  return msg;
+}
