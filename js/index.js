@@ -12,3 +12,31 @@ function getComputerChoice() {
 
   return choice;
 }
+
+function getWinner(playerChoice, computerChoice) {
+  let winner;
+
+  if (playerChoice === computerChoice) {
+    winner = "tie";
+  } else if (playerChoice === "rock") {
+    if (computerChoice === "paper") {
+      winner = "computer";
+    } else {
+      winner = "player";
+    }
+  } else if (playerChoice === "paper") {
+    if (computerChoice === "scissors") {
+      winner = "computer";
+    } else {
+      winner = "player";
+    }
+  } else {
+    if (computerChoice === "rock") {
+      winner = "computer";
+    } else {
+      winner = "player";
+    }
+  }
+
+  return winner;
+}
