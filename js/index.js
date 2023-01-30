@@ -3,11 +3,11 @@ function getComputerChoice() {
   let choice;
 
   if (num === 0) {
-    choice = "rock";
+    choice = 'rock';
   } else if (num === 1) {
-    choice = "paper";
+    choice = 'paper';
   } else {
-    choice = "scissors";
+    choice = 'scissors';
   }
 
   return choice;
@@ -17,24 +17,24 @@ function getWinner(playerChoice, computerChoice) {
   let winner;
 
   if (playerChoice === computerChoice) {
-    winner = "tie";
-  } else if (playerChoice === "rock") {
-    if (computerChoice === "paper") {
-      winner = "computer";
+    winner = 'tie';
+  } else if (playerChoice === 'rock') {
+    if (computerChoice === 'paper') {
+      winner = 'computer';
     } else {
-      winner = "player";
+      winner = 'player';
     }
-  } else if (playerChoice === "paper") {
-    if (computerChoice === "scissors") {
-      winner = "computer";
+  } else if (playerChoice === 'paper') {
+    if (computerChoice === 'scissors') {
+      winner = 'computer';
     } else {
-      winner = "player";
+      winner = 'player';
     }
   } else {
-    if (computerChoice === "rock") {
-      winner = "computer";
+    if (computerChoice === 'rock') {
+      winner = 'computer';
     } else {
-      winner = "player";
+      winner = 'player';
     }
   }
 
@@ -48,9 +48,9 @@ function createWinnerMsg(playerChoice, computerChoice, winner) {
   let computerChoiceUpperCased =
     computerChoice.charAt(0).toUpperCase() + computerChoice.slice(1);
 
-  if (winner === "tie") {
+  if (winner === 'tie') {
     msg = `It's a tie! Both you and the computer chose ${playerChoiceUpperCased}.`;
-  } else if (winner === "player") {
+  } else if (winner === 'player') {
     msg = `You win! ${playerChoiceUpperCased} beats ${computerChoiceUpperCased}.`;
   } else {
     msg = `You lose! ${computerChoiceUpperCased} beats ${playerChoiceUpperCased}.`;
@@ -59,91 +59,95 @@ function createWinnerMsg(playerChoice, computerChoice, winner) {
   return msg;
 }
 
-function playRound(playerSelection, computerSelection) {
-  const playerChoice = playerSelection.toLowerCase();
-  let msg;
-  let winner;
-
-  winner = getWinner(playerChoice, computerSelection);
-  msg = createWinnerMsg(playerChoice, computerSelection, winner);
-
-  return msg;
-}
-
-function displayScore(scores) {
-  console.log(`----------Score----------
-Player: ${scores.playerScore}
-Computer: ${scores.computerScore}`);
-}
-
-function displayVictoryMsg(scores) {
+function getVictoryMsg(scores) {
   if (scores.playerScore > scores.computerScore) {
-    console.log("You win!");
+    return 'You win!';
   } else if (scores.computerScore > scores.playerScore) {
-    console.log("You lose!");
+    return 'You lose!';
   } else {
-    console.log("It's a tie!");
+    return "It's a tie!";
   }
 }
 
+function getNextRoundText() {
+  const currRound = document.getElementById('round').textContent;
+
+  if (currRound.includes('4')) {
+    return 'Final Round';
+  } else {
+    const words = currRound.split(' ');
+    let nextNum = parseInt(words[1]) + 1;
+    return `Round ${nextNum}`;
+  }
+}
+
+function getCurrScores(scores) {
+  const pScore = document.getElementById('player-score').textContent;
+  scores.playerScore = parseInt(pScore.charAt(pScore.length - 1));
+
+  const cScore = document.getElementById('computer-score').textContent;
+  scores.computerScore = parseInt(cScore.charAt(cScore.length - 1));
+
+  return scores;
+}
+
 function updateScores(scores, msg) {
-  if (msg.search("win") !== -1) {
+  if (msg.search('win') !== -1) {
     scores.playerScore++;
-  } else if (msg.search("lose") !== -1) {
+  } else if (msg.search('lose') !== -1) {
     scores.computerScore++;
   }
   return scores;
 }
 
-function getPlayerChoice() {
-  let playerChoice;
-  let invalidInput = true;
+function updateUI(scores, winnerMsg, nextRoundText, victoryMsg) {
+  const currRound = document.getElementById('round');
+  const playerScore = document.getElementById('player-score');
+  const computerScore = document.getElementById('computer-score');
+  const results = document.getElementById('results');
 
-  while (invalidInput) {
-    playerChoice = prompt("Rock, Paper, or Scissors? Please choose one.");
-    playerChoice = playerChoice.toLowerCase();
+  results.textContent = winnerMsg;
+  playerScore.textContent = `You: ${scores.playerScore}`;
+  computerScore.textContent = `Computer: ${scores.computerScore}`;
 
-    if (
-      playerChoice === "rock" ||
-      playerChoice === "paper" ||
-      playerChoice === "scissors"
-    ) {
-      invalidInput = false;
-    } else {
-      alert("You must choose Rock, Paper, or Scissors. Please try again.");
-    }
+  if (victoryMsg !== '') {
+    const resultsContainer = document.querySelector('.results-container');
+    const victoryMsgEle = document.createElement('p');
+    victoryMsgEle.textContent = victoryMsg;
+    resultsContainer.appendChild(victoryMsgEle);
+  } else {
+    currRound.textContent = nextRoundText;
   }
-  return playerChoice;
 }
 
-function game() {
-  let playerChoice;
-  let computerChoice;
+function playRound(e) {
+  const playerChoice = e.target.textContent.toLowerCase();
+  const computerChoice = getComputerChoice();
+  let msg = '';
+  let winner = '';
   let scores = { playerScore: 0, computerScore: 0 };
-  let msg;
+  let nextRoundText = '';
+  let victoryMsg = '';
+  const currRound = document.getElementById('round').textContent;
 
-  for (let i = 0; i < 5; i++) {
-    if (i === 4) {
-      console.log("----------Final Round----------");
-      playerChoice = getPlayerChoice();
-      computerChoice = getComputerChoice();
-      msg = playRound(playerChoice, computerChoice);
-      console.log(msg);
+  winner = getWinner(playerChoice, computerChoice);
+  msg = createWinnerMsg(playerChoice, computerChoice, winner);
+  scores = getCurrScores(scores);
+  scores = updateScores(scores, msg);
 
-      updateScores(scores, msg);
-      displayScore(scores);
-      displayVictoryMsg(scores);
-    } else {
-      console.log(`----------Round ${i + 1}----------`);
-      playerChoice = getPlayerChoice();
-      computerChoice = getComputerChoice();
-      msg = playRound(playerChoice, computerChoice);
-      console.log(msg);
-
-      updateScores(scores, msg);
-      displayScore(scores);
-    }
+  if (currRound === 'Final Round') {
+    victoryMsg = getVictoryMsg(scores);
+  } else {
+    nextRoundText = getNextRoundText();
   }
+
+  updateUI(scores, msg, nextRoundText, victoryMsg);
 }
 
-game();
+function initalizeBtns() {
+  const btns = document.querySelectorAll('button');
+
+  btns.forEach((btn) => btn.addEventListener('click', playRound));
+}
+
+initalizeBtns();
